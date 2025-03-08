@@ -156,18 +156,19 @@ beat / 8 => dur osmina;
 
 
 //leva ruka envelopes
-(beat/4, beat/2, 1, 1000::ms) => env1.set;
-(beat/4, beat/2, 1, 1000::ms) => env2.set;
-(beat/4, beat/2, 1, 1000::ms) => env3.set;
-(beat/4, beat/2, 1, 1000::ms) => env4.set;
+(50::ms, 70::ms, 0.8, 30::ms) => env1.set;
+(50::ms, 70::ms, 0.8, 30::ms) => env2.set;
+(50::ms, 70::ms, 0.8, 30::ms) => env3.set;
+(50::ms, 70::ms, 0.8, 30::ms) => env4.set;
 
-//desna ruka envelope000s
-(beat/4, beat/2, 0.8, 300::ms) => env5.set;
-(beat/4, beat/2, 0.8, 300::ms) => env6.set;
-(beat/4, beat/2, 0.8, 300::ms) => env7.set;
+//desna ruka envelopes
+(10::ms, 30::ms, 0.3, 70::ms) => env5.set;
+(10::ms, 30::ms, 0.3, 70::ms) => env6.set;
+(10::ms, 30::ms, 0.3, 70::ms) => env7.set;
+//attack, delay, sustain, release
 
 //jacina leve ruke
-2 => int leva_ruka_jacina;
+3 => int leva_ruka_jacina;
 leva_ruka_jacina => buf1.gain;
 leva_ruka_jacina => buf2.gain;     
 leva_ruka_jacina => buf3.gain;
@@ -180,7 +181,7 @@ leva_ruka_jacina => buf4.gain;
 
 0 => pauza.gain;
 
-0 => snareb.gain;
+// 0.1 => snareb.gain;
 
 
 [
@@ -203,20 +204,14 @@ jazz_progressions[Math.random2(0, 6)] @=> int glavni_tonovi[];
 
 
 
-//templates - sabloni za 'levu ruku'
 
 
-[[0, 1, 2, 0], [0, 2, 1, 0], [0, 1, 0, 2], [1, 0, 2, 0], [0, 0, 2, 1]] @=> int kratki_leva[][];
-// [[0, 1, 2, 3], [3, 2, 1, 0], [0, 1, 0, 2], [1, 0, 2, 0], [0, 3, 2, 1]] @=> int kratki_leva[][];
+[[0, 1, 2, 0], [0, 2, 1, 0], [0, 1, 0, 2], [1, 0, 2, 0]] @=> int kratki_leva[][];
 
 kratki_leva[Math.random2(0, kratki_leva.cap()-1)] @=> int leva[];
 
-// 25 => int offset;
 Math.random2(22,33) => int offset;
 <<<"offset: ", offset>>>;
-
-//odredjivanje stupnjeva u skali prema kojima se formiraju akordi, pronalaze se 4 random
-//akorda od kojih su druga 3 sigurno razlicita, a prvi je osnovni
 
 int ukupan_broj_akorda[4];
 
@@ -276,6 +271,9 @@ fun void lofiBeats()
 }
 
 
+//templates - sabloni za 'levu ruku'
+
+
 fun void levaRuka1()                //funkcija za reprodukovanje jednog od ,,šablona" za pozadinsku melodiju
 {
     while(true)
@@ -284,22 +282,22 @@ fun void levaRuka1()                //funkcija za reprodukovanje jednog od ,,ša
         {
         
             note[ukupan_broj_akorda[m] + offset] => buf1.read;        //učitavanje note u bafer
-            41000 => buf1.pos;              //krece od 1. sekunde zbog pauze na početku audio fajla
+            60000 => buf1.pos;              //krece od 1. sekunde zbog pauze na početku audio fajla
             1 => env1.keyOn;                //primenjivanje ranije definisanih ADSR parametara
 
             note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]] => buf2.read;
             1 => env2.keyOn;
-            41000 => buf2.pos;
+            60000 => buf2.pos;
         
             note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]] => buf3.read;     
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
 
             beat/2 => now;      //vreme ,,napreduje", tj. reprodukuju se fajlovi koji stoje u baferu
 
-            41000 => buf1.pos;      //vraćanje audio fajla na početnu poziciju
-            41000 => buf2.pos;
-            41000 => buf3.pos;
+            60000 => buf1.pos;      //vraćanje audio fajla na početnu poziciju
+            60000 => buf2.pos;
+            60000 => buf3.pos;
 
             beat/4 => now;
                     
@@ -319,35 +317,31 @@ fun void levaRuka2()
         {
             for (0 => int i; i<1; i++)
             {
-                note[ukupan_broj_akorda[m] + offset] => buf1.read;
-                41000 => buf1.pos;              //krece od 2.6 sekunde zbog pauze
+                note[offset] => buf1.read;
+                60000 => buf1.pos;
                 1 => env1.keyOn;
 
                 note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]] => buf2.read;
                 1 => env2.keyOn;
-                41000 => buf2.pos;
+                60000 => buf2.pos;
             
-                note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]+12] => buf3.read;
+                note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]] => buf3.read;
                 1 => env3.keyOn;
-                41000 => buf3.pos;
+                60000 => buf3.pos;
             
-                for (0 => int j; j<2; j++)
-                {
-                    note[left_hand[j+4*m] + offset + ukupan_broj_akorda[m]] => buf4.read;
-                    41000 => buf4.pos;
-                    1 => env4.keyOn;
-                    if(j==1)
-                    {
-                        beat/4 => now;
-                        //snare => snareb.read;
-                        beat/4 => now;
-                    }
-                    else
-                    {
-                        beat/2=> now;
-                    }
-                }
-                    
+                note[left_hand[4*m] + offset + ukupan_broj_akorda[m]] => buf4.read;
+                60000 => buf4.pos;
+                1 => env4.keyOn;
+                beat/2=> now;
+
+                note[left_hand[4*m +2] + offset + ukupan_broj_akorda[m]] => buf4.read;
+                60000 => buf4.pos;
+                beat*3/8 => now;
+
+                note[left_hand[4*m +1] + offset + ukupan_broj_akorda[m]] => buf4.read;
+                60000 => buf4.pos;
+                beat/8 => now;
+                
             }
         }   
     }
@@ -362,33 +356,33 @@ fun void levaRuka3()
     {
         for(0 => int m; m<ukupan_broj_akorda.cap(); m++)
         {
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4]-12] => buf1.read;
-            41000 => buf1.pos;              //krece od 2.6 sekunde zbog pauze
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4]] => buf1.read;
+            60000 => buf1.pos;              //krece od 2.6 sekunde zbog pauze
             1 => env1.keyOn;
 
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]-12] => buf2.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]] => buf2.read;
             1 => env2.keyOn;
-            41000 => buf2.pos;
+            60000 => buf2.pos;
         
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]-12] => buf3.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2] ] => buf3.read;
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
 
             beat/2 => now;
 
-            41000 => buf1.pos;
-            41000 => buf2.pos;
-            41000 => buf3.pos;
+            60000 => buf1.pos;
+            60000 => buf2.pos;
+            60000 => buf3.pos;
 
             beat/4 => now;
 
-            note[ukupan_broj_akorda[m]+offset + left_hand[m*4] - 12 ] => buf4.read;
+            note[ukupan_broj_akorda[m]+offset + left_hand[m*4] ] => buf4.read;
             1 => env4.keyOn;
-            41000 => buf4.pos;
+            60000 => buf4.pos;
 
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4 + 1] - 12] => buf3.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4 + 1]] => buf3.read;
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
             //snare => snareb.read;
 
             beat/4 => now;
@@ -405,27 +399,27 @@ fun void levaRuka4()
     {
         for(0 => int m; m<ukupan_broj_akorda.cap(); m++)
         {
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4] - 12] => buf1.read;
-            41000 => buf1.pos;              //krece od 2.6 sekunde zbog pauze
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4] -12] => buf1.read;
+            60000 => buf1.pos;              //krece od 2.6 sekunde zbog pauze
             1 => env1.keyOn;
 
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1] - 12] => buf2.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1] ] => buf2.read;
             1 => env2.keyOn;
-            41000 => buf2.pos;
+            60000 => buf2.pos;
         
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2] - 12] => buf3.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2] ] => buf3.read;
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
 
             beat/2 => now;
 
-            note[ukupan_broj_akorda[m]+offset + left_hand[m*4] - 12 + 12 ] => buf2.read;
+            note[ukupan_broj_akorda[m]+offset + left_hand[m*4] ] => buf2.read;
             1 => env4.keyOn;
-            41000 => buf4.pos;
+            60000 => buf4.pos;
 
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4 + 1] - 12] => buf3.read;
+            note[ukupan_broj_akorda[m] + offset + left_hand[m*4 + 1] -12 ] => buf3.read;
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
 
             beat/4 => now;
             
@@ -433,9 +427,9 @@ fun void levaRuka4()
 
             beat/8 => now;
 
-            // 41000 => buf1.pos;
-            41000 => buf4.pos;
-            41000 => buf3.pos;
+            // 60000 => buf1.pos;
+            60000 => buf4.pos;
+            60000 => buf3.pos;
 
 
             beat/8 => now;            
@@ -452,22 +446,22 @@ fun void levaRuka5()                //funkcija za reprodukovanje jednog od ,,ša
         {
         
             note[ukupan_broj_akorda[m] + offset] => buf1.read;        //učitavanje note u bafer
-            41000 => buf1.pos;              //krece od 3.8 sekunde zbog pauze na početku audio fajla
+            60000 => buf1.pos;              //krece od 3.8 sekunde zbog pauze na početku audio fajla
             1 => env1.keyOn;                //primenjivanje ranije definisanih ADSR parametara
 
             note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]] => buf2.read;
             1 => env2.keyOn;
-            41000 => buf2.pos;
+            60000 => buf2.pos;
         
             note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]] => buf3.read;     
             1 => env3.keyOn;
-            41000 => buf3.pos;
+            60000 => buf3.pos;
 
             beat => now;      //vreme ,,napreduje", tj. reprodukuju se fajlovi koji stoje u baferu
 
-            41000 => buf1.pos;      //vraćanje audio fajla na početnu poziciju
-            41000 => buf2.pos;
-            41000 => buf3.pos;
+            60000 => buf1.pos;      //vraćanje audio fajla na početnu poziciju
+            60000 => buf2.pos;
+            60000 => buf3.pos;
 
         }   
     }
@@ -644,12 +638,6 @@ fun void ostale_note_u_taktu(int nota_trenutno, int g, int brojac1, dur trajanje
 
     skok +=> nota_trenutno;
 
-    //(trajanje_nota_u_taktu[broj_note_u_taktu]/4, trajanje_nota_u_taktu[broj_note_u_taktu]*3/2-5::ms, 0, 5::ms) => env7.set;
-    /*env7.keyOn();
-
-    trajanje_nota_u_taktu[broj_note_u_taktu] => now;
-    env7.keyOff();
-    */  
 }
 
 
@@ -699,6 +687,7 @@ fun void desnaRuka()
 
 Math.random2(1,5) => int koja_leva_ruka;
 <<<koja_leva_ruka>>>;
+// 0 => koja_leva_ruka;
 if (koja_leva_ruka==1)
 {
     spork ~ levaRuka1();
@@ -721,7 +710,7 @@ else if (koja_leva_ruka == 5)
 }
 
 Math.random2(1,2) => int rain_dice;
-1 => rain_dice;
+// 1 => rain_dice;
 if(rain_dice == 1){
     spork ~ rainsound();
 }
