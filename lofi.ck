@@ -285,6 +285,29 @@ fun void lofiBeats()
 
 // ------------------ LEVA RUKA --------------------
 
+fun void levaRuka()
+{
+    Math.random2(1,3) => int koja_leva_ruka;
+    
+    while(true)
+    {
+        if (koja_leva_ruka==1)
+        {
+            spork ~ levaRuka1();
+        }
+        else if (koja_leva_ruka==2)
+        {
+            spork ~ levaRuka2();
+        }
+        else if (koja_leva_ruka==3)
+        {
+            spork ~ levaRuka3();
+        }
+        10::second => now;
+    }
+    
+}
+
 
 fun void levaRuka1()                //funkcija za reprodukovanje jednog od ,,šablona" za pozadinsku melodiju
 {
@@ -402,38 +425,6 @@ fun void levaRuka3()
             beat/4 => now;
 
         } 
-    }
-}
-
-
-
-//nije dobra bukv je za 2 akorda
-fun void levaRuka5()                //funkcija za reprodukovanje jednog od ,,šablona" za pozadinsku melodiju
-{
-    while(true)
-    {
-        for(0 => int m; m<2; m++)      //ponavlja se 2 puta
-        {
-        
-            note[ukupan_broj_akorda[m] + offset] => buf1.read;        //učitavanje note u bafer
-            93000 => buf1.pos;              //krece od 3.8 sekunde zbog pauze na početku audio fajla
-            1 => env1.keyOn;                //primenjivanje ranije definisanih ADSR parametara
-
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+1]] => buf2.read;
-            1 => env2.keyOn;
-            93000 => buf2.pos;
-        
-            note[ukupan_broj_akorda[m] + offset + left_hand[m*4+2]] => buf3.read;     
-            1 => env3.keyOn;
-            93000 => buf3.pos;
-
-            beat => now;      //vreme ,,napreduje", tj. reprodukuju se fajlovi koji stoje u baferu
-
-            93000 => buf1.pos;      //vraćanje audio fajla na početnu poziciju
-            93000 => buf2.pos;
-            93000 => buf3.pos;
-
-        }   
     }
 }
 
@@ -675,32 +666,14 @@ fun void desnaRuka()
 
 // -------------------- PLAYING STUFF --------------------
 
-Math.random2(1,4) => int koja_leva_ruka;
-3 => koja_leva_ruka;
-<<<koja_leva_ruka>>>;
-if (koja_leva_ruka==1)
-{
-    spork ~ levaRuka1();
-}
-else if (koja_leva_ruka==2)
-{
-    spork ~ levaRuka2();
-}
-else if (koja_leva_ruka==3)
-{
-    spork ~ levaRuka3();
-}
-else if (koja_leva_ruka == 5)
-{
-    spork ~ levaRuka5();
-}
 
 Math.random2(1,2) => int rain_dice;
-// 2 => rain_dice;
 if(rain_dice == 1){
     spork ~ rainsound();
 }
+
 spork ~ desnaRuka();
+spork ~ levaRuka();
 // spork ~ noiseFun();
 spork ~ lofiBeats();
 while(true)
