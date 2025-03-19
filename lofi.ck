@@ -92,20 +92,6 @@ me.dir() + "samples/Piano.mf.B7_out.wav" => note[84];
 me.dir() + "samples/Snare (1).wav" => string snare;
 
 
-// --------------- RAIN -----------------
-
-me.dir() + "samples/rain-1.wav" => string rain;
-SndBuf rainbuf => dac;
-fun void rainsound()
-{
-    rain => rainbuf.read;
-    0.7 => rainbuf.gain;
-    while(true){
-        52::second => now;
-        20 => rainbuf.pos;
-    }
-
-}
 
 string lofi_beats[4];
 
@@ -231,6 +217,25 @@ for (0 => int i; i<ukupan_broj_akorda.cap(); i++)
 }
 
 
+// --------------- RAIN -----------------
+
+me.dir() + "samples/rain-1.wav" => string rain;
+SndBuf rainbuf => dac;
+fun void rainsound()
+{
+    rain => rainbuf.read;
+    0.7 => rainbuf.gain;
+    while(true){
+        52::second => now;
+        20 => rainbuf.pos;
+    }
+
+}
+
+
+
+// ------------ NOISE -----------------
+
 fun void noiseFun()
 {
     Math.random2f(0, 0.08) => noise.noiseGain;
@@ -240,6 +245,9 @@ fun void noiseFun()
         beat => now;
     }
 }
+
+
+// ------------------ LOFI ----------------
 
 fun void lofiBeats()
 {
@@ -275,7 +283,7 @@ fun void lofiBeats()
 }
 
 
-//templates - sabloni za 'levu ruku'
+// ------------------ LEVA RUKA --------------------
 
 
 fun void levaRuka1()                //funkcija za reprodukovanje jednog od ,,šablona" za pozadinsku melodiju
@@ -429,6 +437,14 @@ fun void levaRuka5()                //funkcija za reprodukovanje jednog od ,,ša
     }
 }
 
+
+
+
+
+
+// -------------------- DESNA RUKA - PRVA NOTA U TAKTU  --------------------
+
+
 fun void prva_nota_u_taktu(int nota_trenutno, int broj_note_u_taktu, int brojac1, dur trajanje_nota_u_taktu[])
 {
     if((nota_trenutno >= 0)&&(nota_trenutno<dozvoljeni.cap()))
@@ -520,6 +536,9 @@ fun void prva_nota_u_taktu_oktava_nize(int nota_trenutno, int offset, int brojac
 }
 
 
+
+// -------------------- MENJANJE OSC I ENV ZBOG PUCKETANJA --------------------
+
 fun void oscMenjaj(int env_brojac, int x, dur trajanje[], int broj)
 {
     if (env_brojac%3 == 0)
@@ -549,6 +568,9 @@ fun void oscMenjaj(int env_brojac, int x, dur trajanje[], int broj)
 }
 
 0 => int nota_za_sviranje;
+
+
+//-------------------- OSTALE NOTE --------------------
 
 fun void ostale_note_u_taktu(int nota_trenutno, int g, int brojac1, dur trajanje_nota_u_taktu[], int env_brojac)
 {
@@ -607,6 +629,9 @@ dur trajanje_nota_u_taktu[8];
 0 => int brojac1;
 0 => int env_brojac;
 
+
+// -------------------- MAIN FUNCTION --------------------
+
 fun void desnaRuka()
 {
     // beat*4 => now;
@@ -646,6 +671,9 @@ fun void desnaRuka()
         }
     }
 }
+
+
+// -------------------- PLAYING STUFF --------------------
 
 Math.random2(1,4) => int koja_leva_ruka;
 3 => koja_leva_ruka;
